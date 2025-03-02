@@ -1,0 +1,61 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:GithubIssues.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="GithubIssues.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="GitHub Issues Viewer">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,*,Auto" Margin="10">
+            <TextBlock Grid.Column="0" Text="Owner:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBox Grid.Column="1" Text="{Binding Owner}" Margin="0,0,10,0"/>
+            <TextBlock Grid.Column="2" Text="Repository:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBox Grid.Column="3" Text="{Binding Repository}" Margin="0,0,10,0"/>
+            <Button Grid.Column="4" Content="Issues laden" Command="{Binding LoadIssuesCommand}"/>
+        </Grid>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Issues}" Margin="10">
+            <!-- Füge ein einfacheres ItemTemplate zum Testen hinzu -->
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Title}" Foreground="Red" FontWeight="Bold"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+            <TextBlock Grid.Row="0" Text="{Binding ErrorMessage}" Foreground="Red"
+                       IsVisible="{Binding HasErrorMessage}"
+                       Margin="10"/>
+
+            <ProgressBar Grid.Row="0" IsIndeterminate="True" IsVisible="{Binding IsLoading}" Margin="10"/>
+            
+            <ListBox Grid.Row="1" ItemsSource="{Binding Issues}" Margin="10">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto">
+                            <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Number, StringFormat='#{0}'}" 
+                                       FontWeight="Bold" Margin="0,0,5,0"/>
+                            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Title}" 
+                                       FontWeight="Bold"/>
+                            <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" 
+                                       Text="{Binding Body}" TextWrapping="Wrap" 
+                                       MaxLines="3" TextTrimming="CharacterEllipsis"/>
+                            <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" 
+                                        Orientation="Horizontal" Margin="0,5,0,0">
+                                <TextBlock Text="{Binding UserLogin}" FontStyle="Italic"/>
+                                <TextBlock Text=" | " Margin="5,0"/>
+                                <TextBlock Text="{Binding CreatedAt, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontStyle="Italic"/>
+                                <TextBlock Text=" | " Margin="5,0"/>
+                                <TextBlock Text="{Binding State}" 
+                                           Foreground="{Binding State, Converter={StaticResource StateToColorConverter}}"/>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Grid>
+</Window>
